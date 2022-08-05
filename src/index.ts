@@ -63,6 +63,7 @@ function main(args: Args) {
     const namespace = args.namespace;
     const overwrite = args.overwrite;
     const flag = overwrite?'w+':'wx+';
+    overwrite && log.info("Warning: existing files will be overwritten!")
     if (
         level === "error" ||
         level === "warn" ||
@@ -78,14 +79,14 @@ function main(args: Args) {
     for(const file of files.found){
         if(file.indexOf("index.html") > -1) return;//exclude index.html
         if(file.indexOf("/test/") > -1) return;//exclude .html files in the test folder
-        log.info(`Found: ${file}`);
-        const controlPath = file.replace(".html",".js");
-        const controlRendererPath = file.replace(".html","Renderer.js");
+        log.info(`Found html file for control generation: ${file}`);
         const startName = file.lastIndexOf("/") + 1;
         let controlName = file.substring(startName);
         controlName = controlName.substring(0,controlName.indexOf(".html"));
         try {
+            log.info(`${controlName}: Reading html for control from ${file}`);
             const fileData = fs.readFileSync(file, { encoding: 'utf8' });
+            log.info(`${controlName}: Converting html to json`);
             const htmlJSON = html2json(fileData
                 .replace(/\n/g, "")
                 .replace(/[\t ]+</g, "<")
@@ -94,12 +95,20 @@ function main(args: Args) {
                 .replace(/[\r ]+</g, "<")
                 .replace(/>[\r ]+</g, "><")
                 .replace(/>[\r ]+$/g, ">"));
+
             const cg = new ControlGenerator();
+            log.info(`${controlName}: Generating control`);
             const content = cg.generateControl((htmlJSON), `${namespace}.${controlName}`, split);
-            fs.writeFile(controlPath,content,{flag:flag},err => err?log.error(err):log.info(`${controlPath}: control created!`));
+            
+            const controlPath = file.replace(".html",".js");
+            log.info(`${controlName}: Write control ${split?'without':'with'} Renderer to ${controlPath}`);
+            fs.writeFile(controlPath,content,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control created in file ${controlPath}!`));
             if(split){
+                const controlRendererPath = file.replace(".html","Renderer.js");
+                log.info(`${controlName}: Generating control Renderer`);
                 const renderer = cg.generateSeperateRenderer(htmlJSON, `${namespace}.${controlName}`);
-                fs.writeFile(controlRendererPath,renderer,{flag:flag},err => err?log.error(err):log.info(`${controlPath}: control renderer created!`));
+                log.info(`${controlName}: Write control Renderer to ${controlPath}`);
+                fs.writeFile(controlRendererPath,renderer,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control Renderer created in file ${controlPath}!`));
             }
         } catch (error) {
             log.error(error);
