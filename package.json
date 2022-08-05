@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "UI5 Control generator based on html",
   "main": "dist/index.js",
+  "bin": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
     "try": "npm run build && node dist/index.js --loglevel debug --p controls --s true --ns be.wl --ow true",
@@ -12,6 +13,10 @@
     "test": "jest",
     "lint": "eslint src",
     "ci": "npm-run-all build test lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemaiwo/ui5-control-generator.git"
   },
   "keywords": [
     "UI5",
