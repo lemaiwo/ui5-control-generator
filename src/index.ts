@@ -14,6 +14,7 @@ log.setDefaultLevel("info");
 
 interface Args {
     split?:boolean,
+    path?:string,
     namespace?:string,
     overwrite?:boolean,
     loglevel?: "debug" | "info" | "warn" | "error";
@@ -28,6 +29,11 @@ yargs
             alias:"ns",
             type:"string",
             default:"com.org"
+        },
+        path:{
+            alias:"p",
+            type:"string",
+            default:"**"
         },
         split:{
             alias:"s",
@@ -52,6 +58,7 @@ main(appArgs);
 // main entry point
 function main(args: Args) {
     const level = args.loglevel;
+    const path = args.path;
     const split = args.split;
     const namespace = args.namespace;
     const overwrite = args.overwrite;
@@ -67,9 +74,10 @@ function main(args: Args) {
         log.info(`Log level set to: ${level}`);
     }
 
-    const files = new Glob("webapp/**/*.html",{sync:true});
+    const files = new Glob(`webapp/${path}/*.html`,{sync:true});
     for(const file of files.found){
-        if(file.indexOf("index.html") > -1) return;
+        if(file.indexOf("index.html") > -1) return;//exclude index.html
+        if(file.indexOf("/test/") > -1) return;//exclude .html files in the test folder
         log.info(`Found: ${file}`);
         const controlPath = file.replace(".html",".js");
         const controlRendererPath = file.replace(".html","Renderer.js");

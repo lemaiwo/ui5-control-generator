@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "try": "npm run build && node dist/index.js --loglevel debug --s true --ns be.wl --ow true",
+    "try": "npm run build && node dist/index.js --loglevel debug --p controls --s true --ns be.wl --ow true",
     "try-watch": "npm run build && node dist/index.js --watch",
     "build": "tsc",
     "watch": "tsc --watch",
