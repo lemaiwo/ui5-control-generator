@@ -86,6 +86,11 @@ function main(args: Args) {
         log.info(`Found html file for control generation: ${file}`);
         const startName = file.lastIndexOf("/") + 1;
         let controlName = file.substring(startName);
+
+        const webappIdx = path.indexOf("/webapp/");
+        const srcIdx = path.indexOf("/src/");
+        const subPathIdx = (webappIdx > -1)?(webappIdx+8):(srcIdx > -1)?(srcIdx+5):0;
+        const subNamespace = path.substring(subPathIdx,file.lastIndexOf("/")).split("/").join(".");
         controlName = controlName.substring(0,controlName.indexOf(".html"));
         try {
             log.info(`${controlName}: Reading html for control from ${file}`);
@@ -102,7 +107,7 @@ function main(args: Args) {
 
             const cg = new ControlGenerator();
             log.info(`${controlName}: Generating control`);
-            const content = cg.generateControl((htmlJSON), `${namespace}.${controlName}`, split);
+            const content = cg.generateControl((htmlJSON), `${namespace}.${subNamespace}.${controlName}`, split);
             
             const controlPath = file.replace(".html",".js");
             log.info(`${controlName}: Write control ${split?'without':'with'} Renderer to ${controlPath}`);
@@ -110,7 +115,7 @@ function main(args: Args) {
             if(split){
                 const controlRendererPath = file.replace(".html","Renderer.js");
                 log.info(`${controlName}: Generating control Renderer`);
-                const renderer = cg.generateSeperateRenderer(htmlJSON, `${namespace}.${controlName}`);
+                const renderer = cg.generateSeperateRenderer(htmlJSON, `${namespace}.${subNamespace}.${controlName}`);
                 log.info(`${controlName}: Write control Renderer to ${controlPath}`);
                 fs.writeFile(controlRendererPath,renderer,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control Renderer created in file ${controlPath}!`));
             }
