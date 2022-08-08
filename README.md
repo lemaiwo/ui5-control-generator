@@ -26,6 +26,12 @@ This is the list of available commandline arguments, including the ones above:
 - `--ow`, `--overwrite`: Overwrite already existing files with the same name, default will not overwrite. Possible values can be true or false.
 - `--loglevel`: Set the console logging verbosity; options are: "error", "warn", "info", "debug", "trace"; default level is "info"
 
+### Demo app
+
+Demo app available on GitHub [https://github.com/lemaiwo/DemoCustomControlGenerator](https://github.com/lemaiwo/DemoCustomControlGenerator)
+- npm script: [https://github.com/lemaiwo/DemoCustomControlGenerator/blob/3b4de25e5814d7b8ed624746208128dba2684269/package.json#L15](https://github.com/lemaiwo/DemoCustomControlGenerator/blob/3b4de25e5814d7b8ed624746208128dba2684269/package.json#L15)
+- control (html + generated control): [https://github.com/lemaiwo/DemoCustomControlGenerator/tree/main/uimodule/webapp/control](https://github.com/lemaiwo/DemoCustomControlGenerator/tree/main/uimodule/webapp/control)
+
 ## Todo
 
 - Detect UI5 namespace automatically
