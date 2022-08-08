@@ -75,7 +75,11 @@ function main(args: Args) {
         log.info(`Log level set to: ${level}`);
     }
 
-    const files = new Glob(`webapp/${path}/*.html`,{sync:true});
+    let files = new Glob(`./**/webapp/${path}/*.html`,{sync:true});
+    if(files.found.length === 0){
+        //in case of a library
+        files = new Glob(`./**/src/${path}/*.html`,{sync:true});
+    }
     for(const file of files.found){
         if(file.indexOf("index.html") > -1) return;//exclude index.html
         if(file.indexOf("/test/") > -1) return;//exclude .html files in the test folder
