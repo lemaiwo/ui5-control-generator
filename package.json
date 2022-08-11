@@ -6,7 +6,7 @@
   "bin": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "try": "npm run build && node dist/index.js --loglevel debug --p controls --s true --ns be.wl --ow true",
+    "try": "npm run build && node dist/index.js --loglevel debug --t TS --p controls --s true --ns be.wl --ow true",
     "try-watch": "npm run build && node dist/index.js --watch",
     "build": "tsc",
     "watch": "tsc --watch",
@@ -32,7 +32,7 @@
     "@types/html2json": "^1.0.1",
     "@types/jest": "^27.0.3",
     "@types/jquery": "^3.5.14",
-    "@types/node": "^16.11.12",
+    "@types/node": "^16.11.47",
     "@types/openui5": "^1.97.0",
     "@types/yargs": "^17.0.7",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
