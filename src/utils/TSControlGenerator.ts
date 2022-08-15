@@ -35,7 +35,7 @@ export default class TSControlGenerator {
                     ts.factory.createIdentifier("Control"),
                     undefined
                 )]
-            )], [this.generateMetadata()]);
+            )], [...this.generateConstructor(controlName), this.generateMetadata(),this.generateInitFn()]);
         const classNode = ts.factory.createNodeArray([
             ts.factory.createImportDeclaration(
                 undefined,
@@ -96,11 +96,11 @@ export default class TSControlGenerator {
                     // ),
                     ts.factory.createPropertyAssignment(
                         ts.factory.createIdentifier("properties"),
-                        ts.factory.createObjectLiteralExpression(this.props.map(prop => 
-                            (ts.factory.createPropertyAssignment(
-                                ts.factory.createIdentifier(prop.name),
-                                ts.factory.createStringLiteral(prop.type)
-                            ))),
+                        ts.factory.createObjectLiteralExpression(this.props.map(prop =>
+                        (ts.factory.createPropertyAssignment(
+                            ts.factory.createIdentifier(prop.name),
+                            ts.factory.createStringLiteral(prop.type)
+                        ))),
                             true
                         )
                     ),
@@ -116,7 +116,111 @@ export default class TSControlGenerator {
             )
         )
     }
-    
+    private generateConstructor(controlName: string) {
+        // const controlName = name.substring(name.lastIndexOf(".") + 1);
+        return [ts.factory.createConstructorDeclaration(
+            undefined,
+            undefined,
+            [ts.factory.createParameterDeclaration(
+                undefined,
+                undefined,
+                undefined,
+                ts.factory.createIdentifier("id"),
+                ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+                ts.factory.createUnionTypeNode([
+                    ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+                    ts.factory.createTypeReferenceNode(
+                        ts.factory.createIdentifier(`$${controlName}Settings`),
+                        undefined
+                    )
+                ]),
+                undefined
+            )],
+            undefined
+        ),
+        ts.factory.createConstructorDeclaration(
+            undefined,
+            undefined,
+            [
+                ts.factory.createParameterDeclaration(
+                    undefined,
+                    undefined,
+                    undefined,
+                    ts.factory.createIdentifier("id"),
+                    ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+                    ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+                    undefined
+                ),
+                ts.factory.createParameterDeclaration(
+                    undefined,
+                    undefined,
+                    undefined,
+                    ts.factory.createIdentifier("settings"),
+                    ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+                    ts.factory.createTypeReferenceNode(
+                        ts.factory.createIdentifier(`$${controlName}Settings`),
+                        undefined
+                    ),
+                    undefined
+                )
+            ],
+            undefined
+        ),
+        ts.factory.createConstructorDeclaration(
+            undefined,
+            undefined,
+            [
+                ts.factory.createParameterDeclaration(
+                    undefined,
+                    undefined,
+                    undefined,
+                    ts.factory.createIdentifier("id"),
+                    ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+                    ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+                    undefined
+                ),
+                ts.factory.createParameterDeclaration(
+                    undefined,
+                    undefined,
+                    undefined,
+                    ts.factory.createIdentifier("settings"),
+                    ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+                    ts.factory.createTypeReferenceNode(
+                        ts.factory.createIdentifier(`$${controlName}Settings`),
+                        undefined
+                    ),
+                    undefined
+                )
+            ],
+            ts.factory.createBlock(
+                [ts.factory.createExpressionStatement(ts.factory.createCallExpression(
+                    ts.factory.createSuper(),
+                    undefined,
+                    [
+                        ts.factory.createIdentifier("id"),
+                        ts.factory.createIdentifier("settings")
+                    ]
+                ))],
+                false
+            )
+        )];
+    }
+    private generateInitFn() {
+        return ts.factory.createMethodDeclaration(
+            undefined,
+            [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
+            undefined,
+            ts.factory.createIdentifier("init"),
+            undefined,
+            undefined,
+            [],
+            undefined,
+            ts.factory.createBlock(
+                [],
+                true
+            )
+        );
+    }
     private renderControl(controljson: Node) {
         let control = "";
         if (controljson.child && !controljson.tag) {
@@ -162,7 +266,7 @@ export default class TSControlGenerator {
         this.props.push(p);
         return "\t\t\trm.text(control." + p.generateFnName("get") + "());\n";
     }
-    
+
     private getParamCount(param: string) {
         // var l = _.countBy(this.props,function(prop){
         // 	return prop.getName().substr(0,param.length) === param?param:"Others";
