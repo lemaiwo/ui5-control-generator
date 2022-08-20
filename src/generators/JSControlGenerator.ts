@@ -1,26 +1,12 @@
 import { Node } from "html2json";
 import PropertyGenerator from "./PropertyGenerator";
 import log from "loglevel";
+import ControlGenerator from "./ControlGenerator";
 
-export default class ControlGenerator {
-    private json: Node;
-    private props: Array<PropertyGenerator>;
-    private firstTime = true;
-    // private mappings:Array<>;
+export default class JSControlGenerator extends ControlGenerator{
     constructor(json?: Node) {
-        this.setJSON(json);
+        super(json);
     }
-    public setJSON(json: Node) {
-        this.json = json;
-    }
-    public getJSON() {
-        return this.json;
-    }
-    public getAllProperties() {
-        return this.props;
-    }
-    // public setMappingTable(){
-    // }
 
     public generateControl(json: Node, name: string, skipRenderer: boolean) {
         if (json) {
@@ -52,7 +38,7 @@ export default class ControlGenerator {
         return controlStr.join(" ");
     }
 
-    private generateBeginControl(name: string) {
+    protected generateBeginControl(name: string) {
         if (!name || (name && name === "")) {
             name = "namespace.ControlName";
         }
@@ -86,39 +72,39 @@ export default class ControlGenerator {
         renderer += "},true);";
         return renderer;
     }
-    private generateEndControl() {
+    protected generateEndControl() {
         return "\t});\n});\n";
     }
-    private generateMetadata() {
+    protected generateMetadata() {
         let meta = "\t\t\"metadata\":{\n\t\t\t\"properties\":{\n";
         const allprops = this.props.map(prop => "\t\t\t\t" + prop.getPropMeta()) || [];
         meta += allprops.join(",\n");
         meta += "\n\t\t\t},\n\t\t\t\"events\":{}\n\t\t}";
         return meta;
     }
-    private generateInitFn() {
+    protected generateInitFn() {
         let InitFn = "\t\tinit() { ";
         InitFn += "}";
         return InitFn;
     }
-    private generateRendererFn() {
+    protected generateRendererFn() {
         this.firstTime = true;
         let RendererFn = "\t\trenderer(rm, control) {\n";
         RendererFn += this.renderControl(this.getJSON());
         RendererFn += "\t\t}";
         return RendererFn;
     }
-    private generateAfterRenderingFn() {
+    protected generateAfterRenderingFn() {
         let AfterRenderingFn = "\t\tonAfterRendering(event) { ";
         AfterRenderingFn += "}";
         return AfterRenderingFn;
     }
-    private generateSettersFn() {
+    protected generateSettersFn() {
         const propsSetters = this.props.filter(prop => !!prop.getSetterFn()).map(prop => `\t\t${prop.getSetterFn()}`) || [];
 
         return propsSetters.join(",\n");
     }
-    private renderControl(controljson: Node) {
+    protected renderControl(controljson: Node) {
         let control = "";
         if (controljson.child && !controljson.tag) {
             if (Array.isArray(controljson.child)) {
@@ -181,7 +167,7 @@ export default class ControlGenerator {
         control += `\t\t\trm.close("${controljson.tag}");\n\n`
         return control;
     }
-    private addProperty() {
+    protected addProperty() {
         if (!this.props) {
             return;
         }
@@ -200,7 +186,7 @@ export default class ControlGenerator {
         this.props.push(p);
         return "\t\t\trm.text(control." + p.generateFnName("get") + "());\n";
     }
-    private addAttribute(attr: string) {
+    protected addAttribute(attr: string) {
         if (!this.props) {
             return;
         }
@@ -217,18 +203,5 @@ export default class ControlGenerator {
         //     aFoundName && aFoundName.length > 0 ? aFoundName[0]._generateSetter : true);
         this.props.push(p);
         return ".attr(\"" + attr + "\",control." + p.generateFnName("get") + "())";
-    }
-    private getParamCount(param: string) {
-        // var l = _.countBy(this.props,function(prop){
-        // 	return prop.getName().substr(0,param.length) === param?param:"Others";
-        // });
-        let l = 0;
-        // $.each(this.props, function (key, value) {
-        for (const value of this.props) {
-            if (value.key.substr(0, param.length) === param) {
-                l++;
-            }
-        }
-        return l ? l : 0;
     }
 }

@@ -8,9 +8,10 @@ import pkg from "../package.json";
 import log from "loglevel";
 import { Glob } from "glob";
 // import {html2json} from "html2json";
-import ControlGenerator from "./utils/ControlGenerator";
+import ControlGenerator from "./generators/ControlGenerator";
+import GeneratorFactory from "./factories/GeneratorFactory";
 import { html2json } from "html2json";
-import TSControlGenerator from "./utils/TSControlGenerator";
+import Type from "sap/ui/model/Type";
 log.setDefaultLevel("info");
 
 interface Args {
@@ -93,6 +94,7 @@ function main(args: Args) {
         log.info(`Found html file for control generation: ${file}`);
         const startName = file.lastIndexOf("/") + 1;
         let controlName = file.substring(startName);
+        const extension = type.toLowerCase();
 
         const webappIdx = path.indexOf("/webapp/");
         const srcIdx = path.indexOf("/src/");
@@ -111,26 +113,19 @@ function main(args: Args) {
                 .replace(/[\r ]+</g, "<")
                 .replace(/>[\r ]+</g, "><")
                 .replace(/>[\r ]+$/g, ">"));
-
-            if(type === "JS"){
-                const cg = new ControlGenerator();
-                log.info(`${controlName}: Generating control`);
-                const content = cg.generateControl((htmlJSON), `${namespace}.${subNamespace}.${controlName}`, split);
-        
-                const controlPath = file.replace(".html",".js");
-                log.info(`${controlName}: Write control ${split?'without':'with'} Renderer to ${controlPath}`);
-                fs.writeFile(controlPath,content,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control created in file ${controlPath}!`));
-                if(split){
-                    const controlRendererPath = file.replace(".html","Renderer.js");
-                    log.info(`${controlName}: Generating control Renderer`);
-                    const renderer = cg.generateSeperateRenderer(htmlJSON, `${namespace}.${subNamespace}.${controlName}`);
-                    log.info(`${controlName}: Write control Renderer to ${controlPath}`);
-                    fs.writeFile(controlRendererPath,renderer,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control Renderer created in file ${controlPath}!`));
-                }
-
-            }else if(type === "TS"){
-                const tscg = new TSControlGenerator();
-                tscg.generateControl(htmlJSON, `${namespace}.${subNamespace}.${controlName}`, split);
+            const generator = GeneratorFactory.getGenerator(type);
+            log.info(`${controlName}: Generating control`);
+            const content = generator.generateControl((htmlJSON), `${namespace}.${subNamespace}.${controlName}`, split);
+    
+            const controlPath = file.replace(".html",`.${extension}`);
+            log.info(`${controlName}: Write control ${split?'without':'with'} Renderer to ${controlPath}`);
+            fs.writeFile(controlPath,content,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control created in file ${controlPath}!`));
+            if(split){
+                const controlRendererPath = file.replace(".html",`Renderer.${extension}`);
+                log.info(`${controlName}: Generating control Renderer`);
+                const renderer = generator.generateSeperateRenderer(htmlJSON, `${namespace}.${subNamespace}.${controlName}`);
+                log.info(`${controlName}: Write control Renderer to ${controlPath}`);
+                fs.writeFile(controlRendererPath,renderer,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control Renderer created in file ${controlPath}!`));
             }
         } catch (error) {
             log.error(error);
