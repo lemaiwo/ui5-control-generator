@@ -36,4 +36,7 @@ Demo app available on GitHub [https://github.com/lemaiwo/DemoCustomControlGenera
 
 - Detect UI5 namespace automatically
 - Automatically use the text in html for the names of properties and attributes
-- TypeScript version
+- Add init function for TypeScript
+- Add onAfterRendering function for TypeScript
+- Fix error in onAfterRendering function for TypeScript
+- Automatically resolve errors after TypeScript files are generated

@@ -8,16 +8,19 @@ import pkg from "../package.json";
 import log from "loglevel";
 import { Glob } from "glob";
 // import {html2json} from "html2json";
-import ControlGenerator from "./utils/ControlGenerator";
+import ControlGenerator from "./generators/ControlGenerator";
+import GeneratorFactory from "./factories/GeneratorFactory";
 import { html2json } from "html2json";
+import Type from "sap/ui/model/Type";
 log.setDefaultLevel("info");
 
 interface Args {
-    split?:boolean,
-    path?:string,
-    namespace?:string,
-    overwrite?:boolean,
+    split?:boolean;
+    path?:string;
+    namespace?:string;
+    overwrite?:boolean;
     loglevel?: "debug" | "info" | "warn" | "error";
+    type?: "TS" | "JS";
 }
 
 // configure yargs with the cli options as launcher
@@ -25,6 +28,10 @@ const version = `${pkg.version} (from ${__filename})`;
 yargs.version(version);
 yargs
     .option({
+        type:{
+            alias:"t",
+            choices: ["TS", "JS"]
+        },
         namespace:{
             alias:"ns",
             type:"string",
@@ -58,6 +65,7 @@ main(appArgs);
 // main entry point
 function main(args: Args) {
     const level = args.loglevel;
+    const type = args.type || "TS";
     const path = args.path;
     const split = args.split;
     const namespace = args.namespace;
@@ -86,6 +94,7 @@ function main(args: Args) {
         log.info(`Found html file for control generation: ${file}`);
         const startName = file.lastIndexOf("/") + 1;
         let controlName = file.substring(startName);
+        const extension = type.toLowerCase();
 
         const webappIdx = path.indexOf("/webapp/");
         const srcIdx = path.indexOf("/src/");
@@ -104,18 +113,17 @@ function main(args: Args) {
                 .replace(/[\r ]+</g, "<")
                 .replace(/>[\r ]+</g, "><")
                 .replace(/>[\r ]+$/g, ">"));
-
-            const cg = new ControlGenerator();
+            const generator = GeneratorFactory.getGenerator(type);
             log.info(`${controlName}: Generating control`);
-            const content = cg.generateControl((htmlJSON), `${namespace}.${subNamespace}.${controlName}`, split);
-            
-            const controlPath = file.replace(".html",".js");
+            const content = generator.generateControl((htmlJSON), `${namespace}.${subNamespace}.${controlName}`, split);
+    
+            const controlPath = file.replace(".html",`.${extension}`);
             log.info(`${controlName}: Write control ${split?'without':'with'} Renderer to ${controlPath}`);
             fs.writeFile(controlPath,content,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control created in file ${controlPath}!`));
             if(split){
-                const controlRendererPath = file.replace(".html","Renderer.js");
+                const controlRendererPath = file.replace(".html",`Renderer.${extension}`);
                 log.info(`${controlName}: Generating control Renderer`);
-                const renderer = cg.generateSeperateRenderer(htmlJSON, `${namespace}.${subNamespace}.${controlName}`);
+                const renderer = generator.generateSeperateRenderer(htmlJSON, `${namespace}.${subNamespace}.${controlName}`);
                 log.info(`${controlName}: Write control Renderer to ${controlPath}`);
                 fs.writeFile(controlRendererPath,renderer,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control Renderer created in file ${controlPath}!`));
             }
