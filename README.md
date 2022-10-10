@@ -33,7 +33,7 @@ Demo app available on GitHub [https://github.com/lemaiwo/DemoCustomControlGenera
 - npm script: [https://github.com/lemaiwo/DemoCustomControlGenerator/blob/3b4de25e5814d7b8ed624746208128dba2684269/package.json#L15](https://github.com/lemaiwo/DemoCustomControlGenerator/blob/3b4de25e5814d7b8ed624746208128dba2684269/package.json#L15)
 - control (html + generated control): [https://github.com/lemaiwo/DemoCustomControlGenerator/tree/main/uimodule/webapp/control](https://github.com/lemaiwo/DemoCustomControlGenerator/tree/main/uimodule/webapp/control)
 
-Demo app TypeScript available on GitHub [https://github.com/lemaiwo/DemoCustomControlGenerator](https://github.com/lemaiwo/DemoCustomControlGenerator)](https://github.com/lemaiwo/TSDemoCustomControlGenerator)
+Demo app TypeScript available on GitHub [https://github.com/lemaiwo/TSDemoCustomControlGenerator](https://github.com/lemaiwo/TSDemoCustomControlGenerator)
 
 ## Todo
 
