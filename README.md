@@ -20,7 +20,8 @@ npx ui5-control-generator --ns <namespace>
 This is the list of available commandline arguments, including the ones above:
 
 
-- `--ns`, `--namespace`: namespace of your UI5 project
+- `--t`, `--type`: Define the type of syntax, JavaScript or TypeScript
+- `--ns`, `--namespace`: Namespace of your UI5 project (including the projectname)
 - `--p`, `--path`: Optional parameter to define a specific folder to search for html files, default will search in all folders
 - `--s`, `--split`: Split Control logic and renderer in two files, default will split. Values can be true or false
 - `--ow`, `--overwrite`: Overwrite already existing files with the same name, default will not overwrite. Possible values can be true or false.
