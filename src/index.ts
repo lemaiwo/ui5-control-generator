@@ -83,11 +83,11 @@ function main(args: Args) {
         log.info(`Log level set to: ${level}`);
     }
 
-    let files = new Glob(`./**/webapp/${path}/*.html`,{sync:true});
-    if(files.found.length === 0){
-        //in case of a library
-        files = new Glob(`./**/src/${path}/*.html`,{sync:true});
-    }
+    const files = new Glob(`./**/{webapp,src}/${path}/*.html`,{ignore:'./**/node_modules/**',sync:true});
+    // if(files.found.length === 0){
+    //     //in case of a library
+    //     files = new Glob(`./**/src/${path}/*.html`,{sync:true});
+    // }
     for(const file of files.found){
         if(file.indexOf("index.html") > -1) return;//exclude index.html
         if(file.indexOf("/test/") > -1) return;//exclude .html files in the test folder
@@ -100,6 +100,7 @@ function main(args: Args) {
         const srcIdx = path.indexOf("/src/");
         const subPathIdx = (webappIdx > -1)?(webappIdx+8):(srcIdx > -1)?(srcIdx+5):0;
         const subNamespace = path.substring(subPathIdx,file.lastIndexOf("/")).split("/").join(".");
+        const controlNameSpace = `${namespace}${path !== '**' ? `.${subNamespace}`:''}`
         controlName = controlName.substring(0,controlName.indexOf(".html"));
         try {
             log.info(`${controlName}: Reading html for control from ${file}`);
@@ -115,7 +116,7 @@ function main(args: Args) {
                 .replace(/>[\r ]+$/g, ">"));
             const generator = GeneratorFactory.getGenerator(type);
             log.info(`${controlName}: Generating control`);
-            const content = generator.generateControl((htmlJSON), `${namespace}.${subNamespace}.${controlName}`, split);
+            const content = generator.generateControl((htmlJSON), `${controlNameSpace}.${controlName}`, split);
     
             const controlPath = file.replace(".html",`.${extension}`);
             log.info(`${controlName}: Write control ${split?'without':'with'} Renderer to ${controlPath}`);
@@ -123,7 +124,7 @@ function main(args: Args) {
             if(split){
                 const controlRendererPath = file.replace(".html",`Renderer.${extension}`);
                 log.info(`${controlName}: Generating control Renderer`);
-                const renderer = generator.generateSeperateRenderer(htmlJSON, `${namespace}.${subNamespace}.${controlName}`);
+                const renderer = generator.generateSeperateRenderer(htmlJSON, `${controlNameSpace}.${controlName}`);
                 log.info(`${controlName}: Write control Renderer to ${controlPath}`);
                 fs.writeFile(controlRendererPath,renderer,{flag:flag},err => err?log.error(err):log.info(`${controlName}: Control Renderer created in file ${controlPath}!`));
             }

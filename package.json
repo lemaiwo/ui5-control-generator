@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "try": "npm run build && node dist/index.js --loglevel debug --t TS --p controls --s true --ns be.wl --ow true",
+    "try-nopath": "npm run build && node dist/index.js --loglevel debug --t TS --s true --ns be.wl --ow true",
     "try-watch": "npm run build && node dist/index.js --watch",
     "build": "tsc",
     "watch": "tsc --watch",
@@ -41,7 +42,7 @@
     "jest": "^27.4.4",
     "npm-run-all": "4.1.5",
     "ts-jest": "^27.1.1",
-    "typescript": "4.5.3"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "glob": "^8.0.3",

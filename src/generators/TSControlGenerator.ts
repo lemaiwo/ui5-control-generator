@@ -58,7 +58,7 @@ export default class TSControlGenerator extends ControlGenerator{
         const end = ts.factory.createExportAssignment(
             undefined,
             undefined,
-            undefined,
+            // undefined,
             ts.factory.createIdentifier(`${controlName}Renderer`)
           )
         const classNode = ts.factory.createNodeArray([...importDeclarations, control,end]);
@@ -86,7 +86,7 @@ export default class TSControlGenerator extends ControlGenerator{
             controlClassContent.push(this.generateRendererFn(controlName,skipRenderer));
         } else {
             controlClassContent.push(ts.factory.createPropertyDeclaration(
-                undefined,
+                // undefined,
                 [ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)],
                 ts.factory.createIdentifier("renderer"),
                 undefined,
@@ -95,7 +95,7 @@ export default class TSControlGenerator extends ControlGenerator{
             ));
         }
         const controlClass = ts.factory.createClassDeclaration(
-            undefined,
+            // undefined,
             [
                 ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
                 ts.factory.createModifier(ts.SyntaxKind.DefaultKeyword)
@@ -137,7 +137,7 @@ export default class TSControlGenerator extends ControlGenerator{
     }
     protected getImports(args: importList) {
         return args.map(arg => ts.factory.createImportDeclaration(
-            undefined,
+            // undefined,
             undefined,
             ts.factory.createImportClause(
                 false,
@@ -150,7 +150,7 @@ export default class TSControlGenerator extends ControlGenerator{
     }
     protected generateMetadata() {
         return ts.factory.createPropertyDeclaration(
-            undefined,
+            // undefined,
             [
                 ts.factory.createModifier(ts.SyntaxKind.StaticKeyword),
                 ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)
@@ -189,10 +189,10 @@ export default class TSControlGenerator extends ControlGenerator{
     protected generateConstructor(controlName: string) {
         // const controlName = name.substring(name.lastIndexOf(".") + 1);
         return [ts.factory.createConstructorDeclaration(
-            undefined,
+            // undefined,
             undefined,
             [ts.factory.createParameterDeclaration(
-                undefined,
+                // undefined,
                 undefined,
                 undefined,
                 ts.factory.createIdentifier("id"),
@@ -209,13 +209,13 @@ export default class TSControlGenerator extends ControlGenerator{
             undefined
         ),
         ts.factory.createConstructorDeclaration(
-            undefined,
+            // undefined,
             undefined,
             this.getConstructorArguments(controlName),
             undefined
         ),
         ts.factory.createConstructorDeclaration(
-            undefined,
+            // undefined,
             undefined,
             this.getConstructorArguments(controlName),
             ts.factory.createBlock(
@@ -258,7 +258,7 @@ export default class TSControlGenerator extends ControlGenerator{
     }
     protected getFnArg(args: argsList) {
         return args.map(arg => ts.factory.createParameterDeclaration(
-            undefined,
+            // undefined,
             undefined,
             undefined,
             ts.factory.createIdentifier(arg.name),
@@ -269,7 +269,7 @@ export default class TSControlGenerator extends ControlGenerator{
     }
     protected generateFn(functionName: string, args: argsList = []) {
         return ts.factory.createMethodDeclaration(
-            undefined,
+            // undefined,
             [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
             undefined,
             ts.factory.createIdentifier(functionName),
@@ -286,7 +286,7 @@ export default class TSControlGenerator extends ControlGenerator{
     protected generateRendererFn(name: string,standAloneRenderer:boolean) {//STOPPED HERE ==> Continue testing + improving => next step renderer
         this.firstTime = true;
         return ts.factory.createPropertyDeclaration(
-            undefined,
+            // undefined,
             [ts.factory.createModifier(standAloneRenderer?ts.SyntaxKind.ConstKeyword:ts.SyntaxKind.StaticKeyword)],
             ts.factory.createIdentifier(standAloneRenderer?`${name}Renderer`:"renderer"),
             undefined,
