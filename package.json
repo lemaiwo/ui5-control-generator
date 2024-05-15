@@ -1,12 +1,13 @@
 {
   "name": "ui5-control-generator",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "UI5 Control generator based on html",
   "main": "dist/index.js",
   "bin": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
     "try": "npm run build && node dist/index.js --loglevel debug --t TS --p controls --s true --ns be.wl --ow true",
+    "try:js": "npm run build && node dist/index.js --loglevel debug --t JS --p controls --s true --ns be.wl --ow true",
     "try-nopath": "npm run build && node dist/index.js --loglevel debug --t TS --s true --ns be.wl --ow true",
     "try-watch": "npm run build && node dist/index.js --watch",
     "build": "tsc",

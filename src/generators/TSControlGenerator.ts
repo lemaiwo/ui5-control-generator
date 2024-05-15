@@ -492,7 +492,7 @@ export default class TSControlGenerator extends ControlGenerator{
         return ts.factory.createCallExpression(
             ts.factory.createPropertyAccessExpression(
                 control,
-                ts.factory.createIdentifier("style")
+                ts.factory.createIdentifier("attr")
             ),
             undefined,
             [
